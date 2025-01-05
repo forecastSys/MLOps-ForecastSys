@@ -1,8 +1,8 @@
+from src.mlops.abstractions import DataPreprocessingStrategyABC
 from typing import Union
 import pandas as pd
-from src.mlops.data_cleaning.data_cleaner_strategy_abc import DataCleanerStrategyABC
 
-class BBGDataMerger(DataCleanerStrategyABC):
+class BBGDataMerger(DataPreprocessingStrategyABC):
 
     def handle_data(self,
                     df_annual_sorted_after_2000: pd.DataFrame,

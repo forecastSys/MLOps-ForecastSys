@@ -2,7 +2,7 @@ from src.mlops.abstractions import DataPreprocessingStrategyABC
 from typing import Union
 import pandas as pd
 
-class DataCleaner:
+class DataTransformer:
 
     def __init__(self, strategy: DataPreprocessingStrategyABC):
 

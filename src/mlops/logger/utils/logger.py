@@ -13,7 +13,7 @@ class Log:
         if not self.logger.handlers:  # Check if handlers already exist
             # Create a handler for logging to a file
             self.log_time = time.strftime("%Y%m%d")
-            file_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "../../log")
+            file_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "../../../../log")
 
             if not os.path.exists(file_dir):
                 os.makedirs(file_dir)
