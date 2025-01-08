@@ -5,6 +5,9 @@ from .impute_data import *
 from .reconstruct_data import *
 from .partition_data import *
 from .reconstruct_data import *
+from .train_model import *
+from .evaluate_model import *
+from .register_model import *
 
 __all__ = [
     'load_data',
@@ -15,4 +18,7 @@ __all__ = [
     'reconstruct_data',
     'partition_data',
     'reconstruct_data',
+    'train_model',
+    'evaluate_model',
+    'register_model',
 ]

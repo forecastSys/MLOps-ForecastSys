@@ -6,8 +6,10 @@ import pandas as pd
 import pickle
 import os
 from zenml import step
+from zenml.client import Client
+experiment_tracker = Client().active_stack.experiment_tracker
 
-# @step
+@step(experiment_tracker=experiment_tracker.name)
 def reconstruct_data(companyID_df_dict: dict) -> Dict[str, Dict[str, Any]]:
 
     # companyID_df_postConstru_dict = DataReconstructor(strategy=BBGDataReconstructionTS()).handle_data(companyID_df_dict=companyID_df_dict,
@@ -21,11 +23,15 @@ def reconstruct_data(companyID_df_dict: dict) -> Dict[str, Dict[str, Any]]:
             companyID_df_postConstru_dict = pickle.load(file)
         print(f"File '{file_path}' loaded.")
     else:
-        companyID_df_postConstru_ar_dict = DataReconstructor(strategy=BBGDataReconstructionTS()).handle_data(companyID_df_dict=companyID_df_dict,
-                                                                                                      model=AR())
-        companyID_df_postConstru_dict = DataReconstructor(strategy=BBGDataReconstructionTS()).handle_data(companyID_df_dict=companyID_df_postConstru_ar_dict,
-                                                                                                      model=ARIMA())
-        with open("../../../data/output/companyID_df_postConstru_dict.pkl", "wb") as file:
+        companyID_df_postConstru_ar_dict = DataReconstructor(strategy=BBGDataReconstructionTS()).handle_data(
+            companyID_df_dict=companyID_df_dict,
+            model=AR(),
+            modify_dict_type='create')
+        companyID_df_postConstru_dict = DataReconstructor(strategy=BBGDataReconstructionTS()).handle_data(
+            companyID_df_dict=companyID_df_postConstru_ar_dict,
+            model=ARIMA(),
+            modify_dict_type='append')
+        with open(file_path, "wb") as file:
             pickle.dump(companyID_df_postConstru_dict, file)
         print(f"File '{file_path}' created and saved.")
     return companyID_df_postConstru_dict

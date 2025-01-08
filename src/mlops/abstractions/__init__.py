@@ -1,7 +1,7 @@
 from .data_preprocessing_strategy_abc import *
 from .model_abc import *
 from .training_abc import *
-
+from .evaluation_abc import *
 __all__ = [
     "DataPreprocessingStrategyABC",
     "DataImputationStrategyABC",
@@ -9,5 +9,6 @@ __all__ = [
     "DataReconstructionStrategyABC",
     "ModelABC",
     "UnivariateTSModelABC",
-    "TrainingABC"
+    "TrainingABC",
+    "EvaluationABC",
 ]

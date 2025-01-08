@@ -1,6 +1,5 @@
 from src.mlops.abstractions import DataReconstructionStrategyABC
-from src.mlops.model import ARModel
-from src.mlops.model import ModelCaller
+from src.mlops.model import ModelCaller, AR, ARIMA
 from typing import Union, Tuple, List
 import pandas as pd
 import numpy as np
@@ -49,19 +48,20 @@ class BBGDataReconstructionTSHelper:
             result.append(forecast_values)
             training_data_with_forecast_result.append(training_data)
             training_data_with_forecast_result.append(forecast_values)
+
         result_flatten = [item for sublist in result for item in sublist]
-        return result, result_flatten, training_data_with_forecast_result
+        return result_flatten, training_data, training_data_with_forecast_result
 
 
 
 class BBGDataReconstructionTS(DataReconstructionStrategyABC):
 
-    def handle_data(self, companyID_df_dict: dict, model: Union[ARModel]) -> dict:
+    def handle_data(self, companyID_df_dict: dict, model: Union[AR, ARIMA], modify_dict_type: str) -> dict:
 
-        self.logger.info(f"start data reconstruction - model: {model.__class__.__name__}")
+        self.logger.info(f"start data reconstruction - model: **{model.__class__.__name__}**")
         companyID_df_postConstru_dict = {}
         for id_bb_unique, df_dict in tqdm(companyID_df_dict.items(),
-                               desc=f"running data reconstruction - calling: {BBGDataReconstructionTS().__class__.__name__} - model: {model.__class__.__name__}"):
+                               desc=f"running data reconstruction - calling: {BBGDataReconstructionTS().__class__.__name__} - model: **{model.__class__.__name__}**"):
             """
             df_dict with key - value: {
                 'df_preConstru': sub_df,
@@ -70,21 +70,48 @@ class BBGDataReconstructionTS(DataReconstructionStrategyABC):
                 'nan_rows': nan_rows,
             }
             """
-            forecast_results = {}
+            training_data_dict = {}
+            result_flatten_dict = {}
             df_x = df_dict["df_preconstru"][self.x_cols_to_process]
             for col in self.x_cols_to_process:
                 if col in df_x.columns:
-                    result, result_flatten, training_data_with_forecast_result = \
+                    result_flatten, training_data, training_data_with_forecast_result = \
                         BBGDataReconstructionTSHelper.data_reconstruction_helper(df_x, col, model)
-                    forecast_results[col] = training_data_with_forecast_result
-            df_forecast_x = pd.DataFrame(forecast_results)
-            temp_dict = {
-                'df_preconstru': df_dict['df_preconstru'],
-                'df_train': df_dict['df_train'],
-                'df_test': df_dict['df_test'],
-                'nan_rows': df_dict['nan_rows'],
-                f'df_x_{model.__class__.__name__}_postConstru'.lower().replace('model', ''): df_forecast_x
-            }
+                    training_data_dict[col] = training_data
+                    result_flatten_dict[col] = result_flatten
+
+            ## data after reconstruction
+            # df_forecast_x = pd.DataFrame(forecast_results)
+
+            ## training data
+            df_train = pd.DataFrame(training_data_dict)
+
+            ## test data predicted by univariate ts model - float
+            df_test = pd.DataFrame(result_flatten_dict)
+
+            ## test data - float + category
+            df_test_w_category = df_test.copy()
+            df_test_w_category[self.industry_info_cols] = df_dict['df_test'][self.industry_info_cols].reset_index(drop=True)
+
+            if modify_dict_type == 'create':
+                temp_dict = {
+                    'df_preconstru': df_dict['df_preconstru'],
+                    'df_test': df_dict['df_test'],
+                    'df_train': df_train,
+                    'df_train_w_category': df_dict['df_train'],
+                    'df_y_test': df_dict['df_ground_truth'][self.y_cols],
+                    # 'nan_rows': df_dict['nan_rows'],
+                    # f'df_x_{model.__class__.__name__}_postConstru'.lower(): df_forecast_x,
+                    f'df_test_predby_{model.__class__.__name__}'.lower(): df_test,
+                    f'df_test_predby_{model.__class__.__name__}_w_category'.lower(): df_test_w_category,
+                }
+            elif modify_dict_type == 'append':
+                temp_dict = df_dict
+                # temp_dict[f'df_x_{model.__class__.__name__}_postConstru'.lower()] = df_forecast_x
+                temp_dict[f'df_test_predby_{model.__class__.__name__}'.lower()] = df_test
+                temp_dict[f'df_test_predby_{model.__class__.__name__}_w_category'.lower()] = df_test_w_category
+            else:
+                raise Exception(f"modify_dict_type must be 'create' or 'append'")
             companyID_df_postConstru_dict[id_bb_unique] = temp_dict
 
         return companyID_df_postConstru_dict

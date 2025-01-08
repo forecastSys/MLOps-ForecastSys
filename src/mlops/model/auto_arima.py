@@ -8,7 +8,7 @@ from autots import AutoTS
 import warnings
 warnings.filterwarnings("ignore")
 
-class ARIMAModel(UnivariateTSModelABC):
+class ARIMA(UnivariateTSModelABC):
     """
     Forecast future values using an automatic ARIMA model.
 

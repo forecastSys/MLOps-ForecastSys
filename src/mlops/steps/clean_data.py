@@ -4,8 +4,10 @@ from typing import Tuple
 from typing_extensions import Annotated
 import pandas as pd
 from zenml import step
+from zenml.client import Client
+experiment_tracker = Client().active_stack.experiment_tracker
 
-@step
+# @step(experiment_tracker=experiment_tracker.name)
 def clean_data(df_annual_sorted_after_2000: pd.DataFrame,
                industry_mappings: list,
                df_company_info: pd.DataFrame) -> pd.DataFrame:

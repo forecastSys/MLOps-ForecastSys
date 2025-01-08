@@ -8,8 +8,10 @@ import numpy as np
 from tqdm import tqdm
 import os
 from zenml import step
+from zenml.client import Client
+experiment_tracker = Client().active_stack.experiment_tracker
 
-@step
+# @step(experiment_tracker=experiment_tracker.name)
 def impute_data(train_df_list: List[pd.DataFrame],
                 ground_truth_list: List[pd.DataFrame]) -> Tuple[pd.DataFrame, pd.DataFrame]:
     logger = Log(f"{os.path.basename(__file__)}").getlog()

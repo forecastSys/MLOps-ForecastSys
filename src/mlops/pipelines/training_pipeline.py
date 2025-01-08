@@ -11,11 +11,14 @@ from src.mlops.steps import (
     split_data,
     impute_data,
     partition_data,
-    reconstruct_data
+    reconstruct_data,
+    train_model,
+    evaluate_model,
 )
+from zenml.integrations.mlflow.mlflow_utils import get_tracking_uri
 
-# docker_settings = DockerSettings(required_integrations=[MLFLOW])
-# @pipeline(enable_cache=False, settings={"docker": docker_settings})
+docker_settings = DockerSettings(required_integrations=[MLFLOW])
+@pipeline(enable_cache=False, settings={"docker": docker_settings})
 def train_pipeline():
 
     ### --------------------------- Data Preprocessing ------------------------ ###
@@ -38,7 +41,19 @@ def train_pipeline():
     # Todo: ### --------------------------- Run univariate ts pipeline ------------------------ ###
 
     ### --------------------------- Run multi-variate ts pipeline ------------------------ ###
+    trained_results = train_model(companyID_df_postConstru_dict)
+
+    evaluated_results = evaluate_model(trained_results)
 
 
     print(companyID_df_postConstru_dict)
-train_pipeline()
+    print(
+        "Now run \n "
+        f"    mlflow ui --backend-store-uri '{get_tracking_uri()} --host 0.0.0.0'\n"
+        "To inspect your experiment runs within the mlflow UI.\n"
+        "You can find your runs tracked within the `mlflow_example_pipeline`"
+        "experiment. Here you'll also be able to compare the two runs.)"
+    )
+if __name__ == "__main__":
+    train_pipeline()
+    pass
