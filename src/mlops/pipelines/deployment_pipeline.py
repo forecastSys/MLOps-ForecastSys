@@ -6,7 +6,8 @@ import pandas as pd
 # from materializer.custom_materializer import cs_materializer
 from src.mlops.steps_deployment import (
     load_data,
-    load_registered_model
+    load_registered_model,
+    predict
 )
 from zenml import pipeline, step
 from zenml.config import DockerSettings
@@ -23,7 +24,7 @@ docker_settings = DockerSettings(required_integrations=[MLFLOW])
 import pandas as pd
 
 
-@pipeline(enable_cache=False)
+# @pipeline(enable_cache=False)
 def prediction_service(
         model_name:str,
         id_bb_unique: str,
@@ -32,8 +33,8 @@ def prediction_service(
 ):
     X = load_data(id_bb_unique, y, year)
     model = load_registered_model(model_name, id_bb_unique, y)
-    prediction = model.predict(X)
-    print(prediction)
+    print(model)
+    prediction = predict(model, X)
     return prediction
 
 if __name__ == "__main__":

@@ -7,14 +7,18 @@ import os
 from zenml import step
 from zenml.client import Client
 experiment_tracker = Client().active_stack.experiment_tracker
+from zenml.integrations.mlflow.mlflow_utils import get_tracking_uri
+
+# Get the tracking URI
+tracking_uri = get_tracking_uri()
 
 @step(experiment_tracker=experiment_tracker.name)
 def load_registered_model(model_name, id_bb_unique, y, model_version="latest") -> Union[Any]:
 
     model_registered_name = model_name + '_' + id_bb_unique + '_' + y
-    model_registered_name = 'LGBRegression_EQ0000000000182032_EBITDA'
-    model_uri = f"mlruns/models:/{model_registered_name}/{model_version}"
+    model_uri = f"models:/{model_registered_name}/{model_version}"
+    print(model_uri)
     if "RF" in model_name:
-        return mlflow.sklearn.load_model(model_uri)
+        return mlflow.pyfunc.load_model(model_uri)
     elif "LGB" in model_name:
-        return mlflow.lightgbm.load_model(model_uri)
+        return mlflow.pyfunc.load_model(model_uri)

@@ -42,10 +42,10 @@ def impute_data(train_df_list: List[pd.DataFrame],
     base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../../data/output'))
 
     df_combined_imputed = pd.concat(train_df_list_imputed, ignore_index=True)
-    df_combined_imputed.to_csv(os.path.join(base_dir, 'union_processed_imputed_expanded_80_20.csv', index=False))
+    df_combined_imputed.to_csv(os.path.join(base_dir, 'union_processed_imputed_expanded_80_20.csv'), index=False)
 
     df_ground_truth = pd.concat(ground_truth_list_unchanged, ignore_index=True)
-    df_ground_truth.to_csv(os.path.join(base_dir, 'union_processed_groundtruth_expanded_80_20.csv', index=False))
+    df_ground_truth.to_csv(os.path.join(base_dir, 'union_processed_groundtruth_expanded_80_20.csv'), index=False)
 
 
     return df_combined_imputed, df_ground_truth

@@ -8,12 +8,14 @@ import pandas as pd
 import streamlit as st
 from PIL import Image
 import mlflow
+from zenml.client import Client
 
 def main():
 
-    st.title("AIDF-CAESARS Forecast System")
-    high_level_image = Image.open("../assets/aidf-caesars.png")
-
+    abs_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../assets'))
+    # high_level_image = Image.open(os.path.join(abs_path, 'aidf-caesars.png'))
+    # st.image(high_level_image, caption="ForecastSys Pipeline", use_column_width=True)
+    st.title("AIDF-CAESARS: Forecast System v0.0.1")
     st.markdown(
     """ 
     #### Problem Statement 
@@ -25,13 +27,23 @@ def main():
      - EBITDA: Earnings Before Interest, Taxes, Depreciation, and Amortization
      This pipeline will help automate financial forecasting and provide valuable insights for report generation.
      """)
+    st.markdown(
+    """ 
+    Below is a figure of the whole pipeline.
+    """
+    )
+    whole_pipeline_image = Image.open(os.path.join(abs_path, 'mlops-workflow.png'))
+    st.image(whole_pipeline_image, caption="ForecastSys Workflow")
 
     company_id = st.text_input("Company ID")
     year_to_predict = int(st.number_input("Year To Predict"))
     y_to_predict = st.text_input("Y to Predict")
     if st.button("Predict"):
         prediction = prediction_service("LGBRegression", company_id, y_to_predict, year_to_predict)
-
+        # run_id = run_metadata.id
+        # client = Client()
+        # pipeline_run = client.get_pipeline_run(f"prediction_service-{run_id}")
+        # predict_step = pipeline_run.get_step("predict")
         st.success(
             f"Prediction for {company_id}'s {y_to_predict} in {year_to_predict} is {prediction}"
         )

@@ -9,7 +9,7 @@ from zenml import step
 from zenml.client import Client
 experiment_tracker = Client().active_stack.experiment_tracker
 
-# @step(experiment_tracker=experiment_tracker.name)
+@step(experiment_tracker=experiment_tracker.name)
 def reconstruct_data(companyID_df_dict: dict) -> Dict[str, Dict[str, Any]]:
 
     # companyID_df_postConstru_dict = DataReconstructor(strategy=BBGDataReconstructionTS()).handle_data(companyID_df_dict=companyID_df_dict,
