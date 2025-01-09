@@ -5,6 +5,10 @@ import pandas as pd
 # Function to extend the data
 def extend_dates(group, start_year, end_year, categorical_columns, numerical_columns):
     """Extend the Year column for each group and fill with NaNs for numerical columns."""
+
+    start_year = int(start_year)
+    end_year = int(end_year)
+
     full_years = pd.DataFrame({'Year': range(start_year, end_year + 1)})
     extended_group = pd.merge(full_years, group, on='Year', how='left')
 

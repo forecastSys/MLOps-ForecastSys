@@ -97,7 +97,7 @@ class BBGDataReconstructionTS(DataReconstructionStrategyABC):
             df_test_w_category[self.industry_info_cols] = df_dict['df_test'][self.industry_info_cols].reset_index(drop=True)
 
             df_test_deploy = df_test.copy()
-            df_test_w_category_deploy = df_test_w_category.copy
+            df_test_w_category_deploy = df_test_w_category.copy()
 
             df_test = df_test.drop(nan_rows)
             df_test_w_category = df_test_w_category.drop(nan_rows)

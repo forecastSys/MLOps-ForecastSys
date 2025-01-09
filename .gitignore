@@ -38,7 +38,7 @@ test-output.xml
 .data
 
 # special software
-mlruns/
+src/mlops/pipelines/mlruns/
 
 tags
 

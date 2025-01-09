@@ -72,8 +72,8 @@ def train_for_company(id_bb_unique, single_company_df_dict):
 def train_model(companyID_df_postConstru_dict: Dict):
     results = {}
     companyID_df_postConstru_dict = {key: companyID_df_postConstru_dict[key] for key in list(companyID_df_postConstru_dict.keys())[:3]}
-
-    file_path = "../../../data/output/training_results.pkl"
+    base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../../data/output'))
+    file_path = os.path.join(base_dir, "training_results.pkl")
     # Check if the file exists
     if os.path.exists(file_path):
         # Load the existing file

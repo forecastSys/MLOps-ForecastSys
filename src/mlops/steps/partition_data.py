@@ -6,7 +6,7 @@ from zenml import step
 from zenml.client import Client
 experiment_tracker = Client().active_stack.experiment_tracker
 
-@step(experiment_tracker=experiment_tracker.name)
+# @step(experiment_tracker=experiment_tracker.name)
 def partition_data(df: pd.DataFrame, df_ground_truth: pd.DataFrame) \
         -> Dict[str, Dict[str, Any]]:
 

@@ -3,7 +3,7 @@ from typing import Union
 import pandas as pd
 import numpy as np
 from tqdm import tqdm
-
+import os
 
 class BBGDataUnionhelper(DataPreprocessingStrategyABC):
 
@@ -163,5 +163,6 @@ class BBGDataUnion(DataPreprocessingStrategyABC):
             result.append(df_result)
 
         df_combined = pd.concat(result, ignore_index=True)
-        df_combined.to_csv('../../../data/output/union_processed.csv', index=False)
+        base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../../data/output'))
+        df_combined.to_csv(os.path.join(base_dir, 'union_processed.csv'), index=False)
         return df_combined, cols_to_process

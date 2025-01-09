@@ -16,15 +16,15 @@ from src.mlops.steps import (
     evaluate_model,
 )
 from zenml.integrations.mlflow.mlflow_utils import get_tracking_uri
+base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../../data/input'))
 
 docker_settings = DockerSettings(required_integrations=[MLFLOW])
-@pipeline(enable_cache=False, settings={"docker": docker_settings})
+# @pipeline(enable_cache=False, settings={"docker": docker_settings})
 def train_pipeline():
-
     # ### --------------------------- Data Preprocessing ------------------------ ###
     # df_annual_sorted_after_2000, industry_mappings, df_company_info = load_data(
-    #     data_path='/data/zhuanghao/MyGithub/MLOps-ForecastSys/data/input/union_ebitda_rev_cashflowfromoper_capex_merged_with_x_vars.csv',
-    #     comp_path='/data/zhuanghao/MyGithub/MLOps-ForecastSys/data/input/Company Info.xlsx'
+    #     data_path=os.path.join(base_dir, 'union_ebitda_rev_cashflowfromoper_capex_merged_with_x_vars.csv'),
+    #     comp_path=os.path.join(base_dir, 'Company Info.xlsx')
     # )
     #
     # df_combined = clean_data(df_annual_sorted_after_2000=df_annual_sorted_after_2000,
@@ -41,12 +41,9 @@ def train_pipeline():
     # Todo: ### --------------------------- Run univariate ts pipeline ------------------------ ###
 
     ### --------------------------- Run multi-variate ts pipeline ------------------------ ###
-    trained_results = train_model(companyID_df_postConstru_dict)
-
-    evaluated_results = evaluate_model(trained_results)
-
-
-    print(companyID_df_postConstru_dict)
+    # trained_results = train_model(companyID_df_postConstru_dict)
+    #
+    # evaluated_results = evaluate_model(trained_results)
     print(
         "Now run \n "
         f"    mlflow ui --backend-store-uri '{get_tracking_uri()}' --host 0.0.0.0\n"
