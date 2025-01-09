@@ -3,6 +3,7 @@ from src.mlops.model import ModelLoader
 import numpy as np
 import pandas as pd
 from sklearn.metrics import mean_squared_error, r2_score
+import mlflow
 
 class RMSE(EvaluationABC):
 
@@ -14,10 +15,15 @@ class RMSE(EvaluationABC):
 
         model, model_uri = ModelLoader.load_model(mlflow_model_name, mlflow_model_run_id)
         y_pred = model.predict(df_X_test)
-        rmse = np.sqrt(mean_squared_error(y_true, y_pred))
-        with mlflow.start_run(run_id=mlflow_model_run_id):
+        rmse = np.sqrt(mean_squared_error(df_y_true, y_pred))
+        # Enable autologging
+        if "LGB" in mlflow_model_name:
+            mlflow.lightgbm.autolog()
+        elif "RF" in mlflow_model_name:
+            mlflow.sklearn.autolog()
+        with mlflow.start_run(run_id=mlflow_model_run_id, nested=True):
             mlflow.log_metric("rmse", rmse)
 
-        mlflow.register_model(model_uri=model_uri, name=mlflow_model_name)
-        print(f"Model registered as {registered_model_name}")
+        # mlflow.register_model(model_uri=model_uri, name=mlflow_model_name)
+        # print(f"Model registered as {registered_model_name}")
         return rmse

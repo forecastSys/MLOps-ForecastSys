@@ -86,6 +86,9 @@ class BBGDataReconstructionTS(DataReconstructionStrategyABC):
             ## training data
             df_train = pd.DataFrame(training_data_dict)
 
+            df_groud_truth_data = df_dict['df_ground_truth'][self.y_cols].reset_index(drop=True)
+            nan_rows = df_groud_truth_data[df_groud_truth_data.isnull().any(axis=1)].index.tolist()
+
             ## test data predicted by univariate ts model - float
             df_test = pd.DataFrame(result_flatten_dict)
 
@@ -93,23 +96,34 @@ class BBGDataReconstructionTS(DataReconstructionStrategyABC):
             df_test_w_category = df_test.copy()
             df_test_w_category[self.industry_info_cols] = df_dict['df_test'][self.industry_info_cols].reset_index(drop=True)
 
+            df_test_deploy = df_test.copy()
+            df_test_w_category_deploy = df_test_w_category.copy
+
+            df_test = df_test.drop(nan_rows)
+            df_test_w_category = df_test_w_category.drop(nan_rows)
+
             if modify_dict_type == 'create':
                 temp_dict = {
                     'df_preconstru': df_dict['df_preconstru'],
+                    'df_ground_truth': df_dict['df_ground_truth'],
                     'df_test': df_dict['df_test'],
                     'df_train': df_train,
                     'df_train_w_category': df_dict['df_train'],
-                    'df_y_test': df_dict['df_ground_truth'][self.y_cols],
+                    'df_y_test': df_groud_truth_data.drop(nan_rows),
                     # 'nan_rows': df_dict['nan_rows'],
                     # f'df_x_{model.__class__.__name__}_postConstru'.lower(): df_forecast_x,
                     f'df_test_predby_{model.__class__.__name__}'.lower(): df_test,
                     f'df_test_predby_{model.__class__.__name__}_w_category'.lower(): df_test_w_category,
+                    f'df_test_predby_{model.__class__.__name__}_deploy'.lower(): df_test_deploy,
+                    f'df_test_predby_{model.__class__.__name__}_deploy_w_category'.lower(): df_test_w_category_deploy
                 }
             elif modify_dict_type == 'append':
                 temp_dict = df_dict
                 # temp_dict[f'df_x_{model.__class__.__name__}_postConstru'.lower()] = df_forecast_x
                 temp_dict[f'df_test_predby_{model.__class__.__name__}'.lower()] = df_test
                 temp_dict[f'df_test_predby_{model.__class__.__name__}_w_category'.lower()] = df_test_w_category
+                temp_dict[f'df_test_predby_{model.__class__.__name__}_deploy'.lower()] = df_test_deploy
+                temp_dict[f'df_test_predby_{model.__class__.__name__}_deploy_w_category'.lower()] = df_test_w_category_deploy
             else:
                 raise Exception(f"modify_dict_type must be 'create' or 'append'")
             companyID_df_postConstru_dict[id_bb_unique] = temp_dict

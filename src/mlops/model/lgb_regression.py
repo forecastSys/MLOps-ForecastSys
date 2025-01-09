@@ -59,10 +59,11 @@ class LGBRegression(ModelABC):
 
         # Create the regressor
         mod = lgb.LGBMRegressor(**params)
-
+        # Enable autologging
+        mlflow.lightgbm.autolog()
         # Adjust cv based on the size of X_train
         cv = min(1, len(X_train))  # Ensure cv is not greater than the number of samples
-        with mlflow.start_run(run_name=f"{self.__class__.__name__}_{id_bb_unique}") as run:
+        with mlflow.start_run(run_name=f"{self.__class__.__name__}_{id_bb_unique}",  nested=True) as run:
             if cv >= 2:
                 grid_search = RandomizedSearchCV(
                     estimator=mod,
@@ -95,13 +96,12 @@ class LGBRegression(ModelABC):
 
             # Log the model to MLflow
             model_name = f"{self.__class__.__name__}_{id_bb_unique}_{y}"
-            mlflow.lightgbm.log_model(lgb_model=model,
-                                     artifact_path=model_name)
+            # mlflow.lightgbm.log_model(lgb_model=model,
+            #                          artifact_path=model_name)
             # model_uri = f"runs:/{run.info.run_id}/{model_name}"
             model_run_id = run.info.run_id
             # mlflow.register_model(model_uri=model_uri, name=model_name)
-
-            print(f"Model for company: {id_bb_unique}, "
-                  f"registered with model name **{model_name}**")
+            # print(f"Model for company: {id_bb_unique}, "
+            #       f"registered with model name **{model_name}**")
 
         return model, model_name, model_run_id

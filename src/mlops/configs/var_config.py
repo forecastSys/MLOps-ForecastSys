@@ -45,7 +45,7 @@ class XYVariables:
             'INDUSTRY_SECTOR_NUM', 'INDUSTRY_GROUP_NUM', 'INDUSTRY_SUBGROUP_NUM',
             'Industry_level_4_num', 'Industry_level_5_num', 'Industry_level_6_num'
         ]
-        self._INDUSTRY_TIC_INFO = ['ID_BB_UNIQUE'] + [i + '_mapped' for i in self._INDUSTRY] + ['TICKER']
+        self._INDUSTRY_TIC_INFO = ['ID_BB_UNIQUE'] + [i + '_mapped' for i in self._INDUSTRY] + ['TICKER'] + ['Year']
 
     @property
     def X_SELECTED(self):

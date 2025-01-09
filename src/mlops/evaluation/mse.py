@@ -17,9 +17,15 @@ class MSE(EvaluationABC):
         model, model_uri = ModelLoader.load_model(mlflow_model_name, mlflow_model_run_id)
         y_pred = model.predict(df_X_test)
         mse = mean_squared_error(df_y_true, y_pred)
-        with mlflow.start_run(run_id=mlflow_model_run_id):
+        # Enable autologging
+        if "LGB" in mlflow_model_name:
+            mlflow.lightgbm.autolog()
+        elif "RF" in mlflow_model_name:
+            mlflow.sklearn.autolog()
+
+        with mlflow.start_run(run_id=mlflow_model_run_id, nested=True):
             mlflow.log_metric("mse", mse)
 
-        mlflow.register_model(model_uri=model_uri, name=mlflow_model_name)
-        print(f"Model registered as {registered_model_name}")
+        # mlflow.register_model(model_uri=model_uri, name=mlflow_model_name)
+        # print(f"Model registered as {registered_model_name}")
         return mse

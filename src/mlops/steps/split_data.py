@@ -7,7 +7,7 @@ from zenml import step
 from zenml.client import Client
 experiment_tracker = Client().active_stack.experiment_tracker
 
-# @step(experiment_tracker=experiment_tracker.name)
+@step(experiment_tracker=experiment_tracker.name)
 def split_data(df_combined: pd.DataFrame) -> Tuple[List[pd.DataFrame], List[pd.DataFrame]]:
 
     train_df_list, ground_truth_list = DataSplitter(strategy=BBGDataSplitter()).handle_data(

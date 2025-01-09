@@ -21,7 +21,7 @@ docker_settings = DockerSettings(required_integrations=[MLFLOW])
 @pipeline(enable_cache=False, settings={"docker": docker_settings})
 def train_pipeline():
 
-    ### --------------------------- Data Preprocessing ------------------------ ###
+    # ### --------------------------- Data Preprocessing ------------------------ ###
     # df_annual_sorted_after_2000, industry_mappings, df_company_info = load_data(
     #     data_path='/data/zhuanghao/MyGithub/MLOps-ForecastSys/data/input/union_ebitda_rev_cashflowfromoper_capex_merged_with_x_vars.csv',
     #     comp_path='/data/zhuanghao/MyGithub/MLOps-ForecastSys/data/input/Company Info.xlsx'
@@ -49,7 +49,7 @@ def train_pipeline():
     print(companyID_df_postConstru_dict)
     print(
         "Now run \n "
-        f"    mlflow ui --backend-store-uri '{get_tracking_uri()} --host 0.0.0.0'\n"
+        f"    mlflow ui --backend-store-uri '{get_tracking_uri()}' --host 0.0.0.0\n"
         "To inspect your experiment runs within the mlflow UI.\n"
         "You can find your runs tracked within the `mlflow_example_pipeline`"
         "experiment. Here you'll also be able to compare the two runs.)"

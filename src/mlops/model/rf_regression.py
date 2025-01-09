@@ -40,8 +40,9 @@ class RFRegression(ModelABC):
         }
 
         cv = min(1, len(X_train))
-
-        with mlflow.start_run(run_name=f"{self.__class__.__name__}_{id_bb_unique}") as run:
+        # Enable autologging
+        mlflow.sklearn.autolog()
+        with mlflow.start_run(run_name=f"{self.__class__.__name__}_{id_bb_unique}",  nested=True) as run:
             if cv >= 2:
                 grid_search = RandomizedSearchCV(
                     estimator=rf,
@@ -82,13 +83,12 @@ class RFRegression(ModelABC):
 
             # Log the model to MLflow
             model_name = f"{self.__class__.__name__}_{id_bb_unique}_{y}"
-            mlflow.sklearn.log_model(sk_model=model,
-                                     artifact_path=model_name)
+            # mlflow.sklearn.log_model(sk_model=model,
+            #                          artifact_path=model_name)
 
             # model_uri = f"runs:/{run.info.run_id}/{model_name}"
             model_run_id = run.info.run_id
             # mlflow.register_model(model_uri=model_uri, name=model_name)
-
             print(f"Model for company: {id_bb_unique}, "
                   f"registered with model name **{model_name}**")
 

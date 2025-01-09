@@ -16,13 +16,18 @@ class BBGDataSplitter(DataPreprocessingStrategyABC):
         # cols_to_process = ['col1', 'col2', ...]
         for id_bb_unique, sub_df in tqdm(df_combined.groupby('ID_BB_UNIQUE'),
                                          desc="Splitting data into train and test"):
-            # Calculate the number of rows to include (first 80%)
-            n_rows = len(sub_df)
-            n_train = int(n_rows * 0.8)
 
-            # Split the data into training_pipeline and testing subsets
-            train_sub_df = sub_df.iloc[:n_train]
-            test_sub_df = sub_df.iloc[n_train:]
+            # if deploy:
+            train_sub_df = sub_df[sub_df.Year.apply(lambda x: x <= 2020)]
+            test_sub_df = sub_df[sub_df.Year.apply(lambda x: x > 2020)]
+            # else:
+            #     # Calculate the number of rows to include (first 80%)
+            #     n_rows = len(sub_df)
+            #     n_train = int(n_rows * 0.8)
+            #
+            #     # # Split the data into training_pipeline and testing subsets
+            #     train_sub_df = sub_df.iloc[:n_train]
+            #     test_sub_df = sub_df.iloc[n_train:]
 
             train_df_list.append(train_sub_df.copy())
             # Store ground truth for the test set

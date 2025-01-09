@@ -15,3 +15,5 @@ class Variables:
     filing_status_priority = bbgfields.FILING_STATUS_PRIORITY
     # Define the priority mapping for 'ACCOUNTING_STANDARD'
     accounting_standard_priority = bbgfields.ACCOUNTING_STANDARD_PRIORITY
+
+    expand_year = 2030
