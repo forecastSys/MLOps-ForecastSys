@@ -12,6 +12,7 @@ from .register_model import *
 __all__ = [
     'load_data',
     'load_intermediate_data',
+    'load_intermediate_training_data',
     'clean_data',
     'split_data',
     'impute_data',

@@ -8,8 +8,7 @@ from zenml import step
 from zenml.client import Client
 experiment_tracker = Client().active_stack.experiment_tracker
 
-@step(experiment_tracker=experiment_tracker.name)
+# @step(experiment_tracker=experiment_tracker.name, enable_cache=False)
 def predict(model: Any, X: pd.DataFrame) -> float:
     prediction = model.predict(X)
-    print(prediction[0])
     return prediction[0]

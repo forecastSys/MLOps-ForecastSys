@@ -14,10 +14,13 @@ def evaluate_for_y(df_X_test: pd.DataFrame,
                    df_y_true: pd.Series,
                    mlflow_model_name: str,
                    mlflow_model_run_id: str):
-    mse = Evaluator(strategy=MSE()).evaluate(df_X_test, df_y_true, mlflow_model_name, mlflow_model_run_id)
-    rmse = Evaluator(strategy=RMSE()).evaluate(df_X_test, df_y_true, mlflow_model_name, mlflow_model_run_id)
-    r2score = Evaluator(strategy=R2Score()).evaluate(df_X_test, df_y_true, mlflow_model_name, mlflow_model_run_id)
-    pass
+    try:
+        mse = Evaluator(strategy=MSE()).evaluate(df_X_test, df_y_true, mlflow_model_name, mlflow_model_run_id)
+        rmse = Evaluator(strategy=RMSE()).evaluate(df_X_test, df_y_true, mlflow_model_name, mlflow_model_run_id)
+        r2score = Evaluator(strategy=R2Score()).evaluate(df_X_test, df_y_true, mlflow_model_name, mlflow_model_run_id)
+    except:
+        print('groundtrue of Y is NAs')
+        pass
 
 def evaluate_for_model(df_test: pd.DataFrame, df_y_true: pd.DataFrame, y_and_model_info: Dict, id_bb_unique: str):
 

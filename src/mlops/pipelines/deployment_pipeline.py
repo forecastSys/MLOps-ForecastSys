@@ -33,9 +33,10 @@ def prediction_service(
 ):
     X = load_data(id_bb_unique, y, year)
     model = load_registered_model(model_name, id_bb_unique, y)
-    print(model)
     prediction = predict(model, X)
+    print(X)
+    print(prediction)
     return prediction
 
 if __name__ == "__main__":
-    prediction_service('LGBRegression', 'EQ0000000000142041', 'EBITDA', 2023)
+    prediction_service('LGBRegression', 'EQ0000000000142041', 'EBITDA', 2027)

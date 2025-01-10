@@ -38,15 +38,24 @@ def main():
     company_id = st.text_input("Company ID")
     year_to_predict = int(st.number_input("Year To Predict"))
     y_to_predict = st.text_input("Y to Predict")
+
+    bbunique2u3 = pd.read_csv(os.path.join(abs_path, 'bbunique2u3.csv'))
+    company_name = bbunique2u3[bbunique2u3.ID_BB_UNIQUE == company_id]['Company_name'].iloc[0]
+    print(company_name)
     if st.button("Predict"):
-        prediction = prediction_service("LGBRegression", company_id, y_to_predict, year_to_predict)
-        # run_id = run_metadata.id
-        # client = Client()
-        # pipeline_run = client.get_pipeline_run(f"prediction_service-{run_id}")
-        # predict_step = pipeline_run.get_step("predict")
-        st.success(
-            f"Prediction for {company_id}'s {y_to_predict} in {year_to_predict} is {prediction}"
-        )
+        if year_to_predict == 2026:
+            prediction = prediction_service("LGBRegression", company_id, y_to_predict, year_to_predict)
+            # run_id = run_metadata.id
+            # client = Client()
+            # pipeline_run = client.get_pipeline_run(f"prediction_service-{run_id}")
+            # predict_step = pipeline_run.get_step("predict")
+            st.success(
+                f"Prediction for {company_name}({company_id})'s {y_to_predict} in {year_to_predict} is {prediction}."
+            )
+        else:
+            st.success(
+                f"Prediction only available for 2026."
+            )
 
 
 if __name__ == "__main__":
