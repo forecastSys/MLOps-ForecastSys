@@ -63,7 +63,7 @@ class LGBRegression(ModelABC):
         mlflow.lightgbm.autolog()
         # Adjust cv based on the size of X_train
         cv = min(1, len(X_train))  # Ensure cv is not greater than the number of samples
-        with mlflow.start_run(run_name=f"{self.__class__.__name__}_{id_bb_unique}",  nested=True) as run:
+        with mlflow.start_run(run_name=f"{self.__class__.__name__}_{id_bb_unique}_{y}",  nested=True) as run:
             if cv >= 2:
                 grid_search = RandomizedSearchCV(
                     estimator=mod,
