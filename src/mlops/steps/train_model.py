@@ -72,7 +72,7 @@ def train_for_company(id_bb_unique, single_company_df_dict):
 @step(experiment_tracker=experiment_tracker.name)
 def train_model(companyID_df_postConstru_dict: Dict):
     results = {}
-    companyID_df_postConstru_dict = {key: companyID_df_postConstru_dict[key] for key in list(companyID_df_postConstru_dict.keys())[:50]}
+    companyID_df_postConstru_dict = {key: companyID_df_postConstru_dict[key] for key in list(companyID_df_postConstru_dict.keys())[:10]}
     base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../../data/output'))
     file_path = os.path.join(base_dir, "training_results.pkl")
     # Check if the file exists
@@ -82,7 +82,7 @@ def train_model(companyID_df_postConstru_dict: Dict):
             results = pickle.load(file)
         print(f"File '{file_path}' loaded.")
     else:
-        with ProcessPoolExecutor(max_workers=10) as executor:
+        with ProcessPoolExecutor(max_workers=3) as executor:
             futures = [
                 executor.submit(train_for_company, id_bb_unique, single_company_df_dict)
                 for id_bb_unique, single_company_df_dict in companyID_df_postConstru_dict.items()

@@ -3,7 +3,7 @@ from typing import Union, Tuple, List
 import pandas as pd
 import numpy as np
 from tqdm import tqdm
-
+from sklearn.model_selection import GridSearchCV,RandomizedSearchCV
 import lightgbm as lgb
 from lightgbm import Booster
 import mlflow
@@ -49,20 +49,29 @@ class LGBRegression(ModelABC):
         }
 
         # Create parameters to search
+        # grid_params = {
+        #     'learning_rate': [0.01, 0.05, 0.1, 0.2],
+        #     'n_estimators': [100, 500, 1000],
+        #     'num_leaves': [8, 16, 45],
+        #     'feature_fraction': [0.6, 0.7, 0.8, 0.9, 1.0],
+        #     'max_depth': [-1, 5, 10, 20],
+        # }
+
         grid_params = {
-            'learning_rate': [0.01, 0.05, 0.1, 0.2],
-            'n_estimators': [100, 500, 1000],
-            'num_leaves': [8, 16, 45],
-            'feature_fraction': [0.6, 0.7, 0.8, 0.9, 1.0],
-            'max_depth': [-1, 5, 10, 20],
+            'learning_rate': [0.01, 0.05, 0.1],  # Removed 0.2
+            'n_estimators': [100, 500],  # Removed 1000 (too large)
+            'num_leaves': [8, 16, 32],  # Adjusted to power of 2
+            'feature_fraction': [0.7, 0.8, 0.9],  # Removed extremes
+            'max_depth': [5, 10],  # Removed -1 (unlimited) and 20
         }
+
 
         # Create the regressor
         mod = lgb.LGBMRegressor(**params)
         # Enable autologging
         mlflow.lightgbm.autolog()
         # Adjust cv based on the size of X_train
-        cv = min(1, len(X_train))  # Ensure cv is not greater than the number of samples
+        cv = min(5, len(X_train))  # Ensure cv is not greater than the number of samples
         with mlflow.start_run(run_name=f"{self.__class__.__name__}_{id_bb_unique}_{y}",  nested=True) as run:
             if cv >= 2:
                 grid_search = RandomizedSearchCV(
@@ -87,7 +96,7 @@ class LGBRegression(ModelABC):
                 mlflow.log_metric("best_neg_rmse", best_score)
 
                 # Use the best estimator from grid search
-                model = grid.best_estimator_
+                model = grid_search.best_estimator_
             else:
                 # Not enough data for cross-validation; fit the model directly
                 mod.fit(X_train, y_train)
