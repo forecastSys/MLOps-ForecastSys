@@ -58,11 +58,11 @@ class LGBRegression(ModelABC):
         # }
 
         grid_params = {
-            'learning_rate': [0.01, 0.05, 0.1],  # Removed 0.2
-            'n_estimators': [100, 500],  # Removed 1000 (too large)
-            'num_leaves': [8, 16, 32],  # Adjusted to power of 2
-            'feature_fraction': [0.7, 0.8, 0.9],  # Removed extremes
-            'max_depth': [5, 10],  # Removed -1 (unlimited) and 20
+            'learning_rate': [0.01, 0.05, 0.1],
+            'n_estimators': [100, 500],
+            'num_leaves': [8, 16, 32],
+            'feature_fraction': [0.7, 0.8, 0.9],
+            'max_depth': [5, 10],
         }
 
 
