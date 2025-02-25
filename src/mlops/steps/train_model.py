@@ -1,6 +1,6 @@
 from src.mlops.logger.utils.logger import Log
 from src.mlops.training import Trainer, MultivariateTraining
-from src.mlops.model import RFRegression, LGBRegression
+from src.mlops.model import RFRegression, LGBRegression, H2OAuto
 from src.mlops.configs import Variables
 # from src.mlops.materializer import CSMaterializer
 from concurrent.futures import ProcessPoolExecutor, as_completed
@@ -10,6 +10,7 @@ from tqdm import tqdm
 import os
 import pandas as pd
 import pickle
+import h2o
 from zenml import step
 from zenml.client import Client
 experiment_tracker = Client().active_stack.experiment_tracker
@@ -46,8 +47,8 @@ def train_for_company(id_bb_unique, single_company_df_dict):
 
     logger = Log(f"{os.path.basename(__file__)}").getlog()
     y_cols = Variables().y_cols
+    # models = [H2OAuto(), LGBRegression(), RFRegression()]
     models = [LGBRegression(), RFRegression()]
-
     company_results = {"data": single_company_df_dict, "model": {}}
     for model in models:
         model_name = model.__class__.__name__
@@ -74,7 +75,7 @@ def train_model(companyID_df_postConstru_dict: Dict):
     results = {}
     companyID_df_postConstru_dict = {key: companyID_df_postConstru_dict[key] for key in list(companyID_df_postConstru_dict.keys())[:10]}
     base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../../data/output'))
-    file_path = os.path.join(base_dir, "training_results.pkl")
+    file_path = os.path.join(base_dir, "training_results_auto.pkl")
     # Check if the file exists
     if os.path.exists(file_path):
         # Load the existing file
@@ -90,7 +91,10 @@ def train_model(companyID_df_postConstru_dict: Dict):
             for future in tqdm(as_completed(futures), total=len(futures), desc="Processing companies"):
                 id_bb_unique, company_results = future.result()
                 results[id_bb_unique] = company_results
-
+        # for id_bb_unique, single_company_df_dict in tqdm(companyID_df_postConstru_dict.items(),
+        #                                                  desc="Processing companies"):
+        #     id_bb_unique, company_results = train_for_company(id_bb_unique, single_company_df_dict)
+        #     results[id_bb_unique] = company_results
         with open(file_path, "wb") as file:
             pickle.dump(results, file)
 

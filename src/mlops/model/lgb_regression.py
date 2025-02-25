@@ -18,17 +18,19 @@ class LGBRegression(ModelABC):
                     y: str) -> Union[Booster, str]:
 
         """
-                Perform regression using a LightGBM model and forecast future values.
+        Trains a model using the given training data.
 
-                Parameters:
-                - y_train (array-like): The target variable values for training_pipeline.
-                - X_train (array-like): The feature variables for training_pipeline.
-                - forecast_points (int): Not used in this function but kept for consistency.
-                - X_test (array-like): The feature variables for which predictions are to be made.
+        Parameters:
+        - X_train (pd.DataFrame): Feature matrix for training.
+        - y_train (pd.Series): Target variable corresponding to X_train.
+        - id_bb_unique (str): Unique identifier for tracking the training instance.
+        - y (str): Column name representing the target variable.
 
-                Returns:
-                - list: A list containing the predicted values.
-                """
+        Returns:
+        - model(Booster): MODEL
+        - model_name (str): name of the model
+        - model_run_id (str): mlflow run id of the model
+        """
         # Adjusted parameters for regression
         params = {
             'boosting_type': 'gbdt',
