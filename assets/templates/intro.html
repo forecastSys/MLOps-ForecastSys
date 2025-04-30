@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AIDF-CAESARS Forecast System</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            width: 80%;
+            margin: auto;
+            overflow: hidden;
+            padding: 20px;
+        }
+        header {
+            background-color: #35424a;
+            color: #ffffff;
+            padding-top: 30px;
+            min-height: 70px;
+            border-bottom: #e8491d 3px solid;
+        }
+        header h1 {
+            text-align: center;
+            text-transform: uppercase;
+            margin: 0;
+        }
+        .intro {
+            background-color: #ffffff;
+            padding: 20px;
+            margin-top: 20px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        .btn {
+            display: inline-block;
+            background-color: #e8491d;
+            color: #ffffff;
+            padding: 10px 20px;
+            text-decoration: none;
+            margin-top: 10px;
+            border-radius: 5px;
+        }
+        .btn:hover {
+            background-color: #35424a;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>AIDF-CAESARS: Forecast System v0.0.1</h1>
+    </header>
+    <div class="container">
+        <div class="intro">
+            <h2>Problem Statement</h2>
+            <p>
+                The objective here is to assist the AIDF-Caesars Report Generation system by building a pipeline to forecast several financial indicators for companies. These indicators include:
+            </p>
+            <ul>
+                <li><strong>SALES_REV_TURN:</strong> Sales Revenue or Turnover</li>
+                <li><strong>CF_CASH_FROM_OPER:</strong> Cash Flow from Operations</li>
+                <li><strong>ARD_CAPITAL_EXPENDITURES:</strong> Capital Expenditures</li>
+                <li><strong>EBITDA:</strong> Earnings Before Interest, Taxes, Depreciation, and Amortization</li>
+            </ul>
+            <p>
+                This pipeline will help automate financial forecasting and provide valuable insights for report generation.
+            </p>
+
+            <h3>Sample Usage</h3>
+            <pre><code>
+import requests
+
+# API endpoint
+url = "http://10.230.252.6:5555/predict"
+
+# Data to send in the request
+payload = {
+    "company_id": 47110,
+    "year_to_predict": 2026,
+    "y_to_predict": "EBITDA"
+}
+
+# Sending POST request
+response = requests.post(url, json=payload)
+
+# Check response
+if response.status_code == 200:
+    print("Prediction Result:", response.json())
+else:
+    print(f"Error {response.status_code}: {response.text}")
+                
+                </code></pre>
+        </div>
+    </div>
+</body>
+</html>

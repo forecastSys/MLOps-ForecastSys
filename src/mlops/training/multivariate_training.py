@@ -1,5 +1,5 @@
 from src.mlops.abstractions import TrainingABC
-from src.mlops.model import ModelCaller, RFRegression, LGBRegression
+from src.mlops.model import ModelCaller, RFRegression, LGBRegression, H2OAuto
 from typing import Union, Tuple, List, Dict
 import pandas as pd
 import numpy as np
@@ -37,7 +37,12 @@ class MultivariateTraining(TrainingABC):
                      y: str,
                      model: Union[RFRegression, LGBRegression]):
 
-        df_train = single_company_df_dict['df_train']
+        if isinstance(model, H2OAuto):
+            key_name = 'df_train_w_category'
+        else:
+            key_name = 'df_train'
+
+        df_train = single_company_df_dict[key_name]
         df_y_train = df_train[y]
         df_X_train = df_train.drop(columns=[y])
         model, model_name, model_run_id = MultivariateTrainingHelper(df_X_train=df_X_train,

@@ -1,4 +1,5 @@
 from src.mlops.logger import LoggerDescriptor
+from src.mlops.configs import Variables
 from abc import ABC, abstractmethod
 import numpy as np
 import pandas as pd
@@ -7,7 +8,7 @@ from typing import List, Tuple, Union
 from sklearn.base import RegressorMixin
 from lightgbm import Booster
 
-class ModelABC(ABC):
+class ModelABC(ABC, Variables):
     """
     Abstract base class for all models.
     """

@@ -3,7 +3,7 @@ from typing import Union, Tuple, List
 import pandas as pd
 import numpy as np
 from tqdm import tqdm
-
+from sklearn.model_selection import GridSearchCV,RandomizedSearchCV
 import lightgbm as lgb
 from lightgbm import Booster
 import mlflow
@@ -18,17 +18,19 @@ class LGBRegression(ModelABC):
                     y: str) -> Union[Booster, str]:
 
         """
-                Perform regression using a LightGBM model and forecast future values.
+        Trains a model using the given training data.
 
-                Parameters:
-                - y_train (array-like): The target variable values for training_pipeline.
-                - X_train (array-like): The feature variables for training_pipeline.
-                - forecast_points (int): Not used in this function but kept for consistency.
-                - X_test (array-like): The feature variables for which predictions are to be made.
+        Parameters:
+        - X_train (pd.DataFrame): Feature matrix for training.
+        - y_train (pd.Series): Target variable corresponding to X_train.
+        - id_bb_unique (str): Unique identifier for tracking the training instance.
+        - y (str): Column name representing the target variable.
 
-                Returns:
-                - list: A list containing the predicted values.
-                """
+        Returns:
+        - model(Booster): MODEL
+        - model_name (str): name of the model
+        - model_run_id (str): mlflow run id of the model
+        """
         # Adjusted parameters for regression
         params = {
             'boosting_type': 'gbdt',
@@ -49,21 +51,30 @@ class LGBRegression(ModelABC):
         }
 
         # Create parameters to search
+        # grid_params = {
+        #     'learning_rate': [0.01, 0.05, 0.1, 0.2],
+        #     'n_estimators': [100, 500, 1000],
+        #     'num_leaves': [8, 16, 45],
+        #     'feature_fraction': [0.6, 0.7, 0.8, 0.9, 1.0],
+        #     'max_depth': [-1, 5, 10, 20],
+        # }
+
         grid_params = {
-            'learning_rate': [0.01, 0.05, 0.1, 0.2],
-            'n_estimators': [100, 500, 1000],
-            'num_leaves': [8, 16, 45],
-            'feature_fraction': [0.6, 0.7, 0.8, 0.9, 1.0],
-            'max_depth': [-1, 5, 10, 20],
+            'learning_rate': [0.01, 0.05, 0.1],
+            'n_estimators': [100, 500],
+            'num_leaves': [8, 16, 32],
+            'feature_fraction': [0.7, 0.8, 0.9],
+            'max_depth': [5, 10],
         }
+
 
         # Create the regressor
         mod = lgb.LGBMRegressor(**params)
         # Enable autologging
         mlflow.lightgbm.autolog()
         # Adjust cv based on the size of X_train
-        cv = min(1, len(X_train))  # Ensure cv is not greater than the number of samples
-        with mlflow.start_run(run_name=f"{self.__class__.__name__}_{id_bb_unique}",  nested=True) as run:
+        cv = min(5, len(X_train))  # Ensure cv is not greater than the number of samples
+        with mlflow.start_run(run_name=f"{self.__class__.__name__}_{id_bb_unique}_{y}",  nested=True) as run:
             if cv >= 2:
                 grid_search = RandomizedSearchCV(
                     estimator=mod,
@@ -87,7 +98,7 @@ class LGBRegression(ModelABC):
                 mlflow.log_metric("best_neg_rmse", best_score)
 
                 # Use the best estimator from grid search
-                model = grid.best_estimator_
+                model = grid_search.best_estimator_
             else:
                 # Not enough data for cross-validation; fit the model directly
                 mod.fit(X_train, y_train)

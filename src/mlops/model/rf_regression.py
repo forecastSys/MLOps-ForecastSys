@@ -39,10 +39,10 @@ class RFRegression(ModelABC):
             'max_features': ['sqrt', 'log2', None],
         }
 
-        cv = min(1, len(X_train))
+        cv = min(5, len(X_train))
         # Enable autologging
         mlflow.sklearn.autolog()
-        with mlflow.start_run(run_name=f"{self.__class__.__name__}_{id_bb_unique}",  nested=True) as run:
+        with mlflow.start_run(run_name=f"{self.__class__.__name__}_{id_bb_unique}_{y}",  nested=True) as run:
             if cv >= 2:
                 grid_search = RandomizedSearchCV(
                     estimator=rf,

@@ -19,7 +19,7 @@ def main():
     st.markdown(
     """ 
     #### Problem Statement 
-     The objective here is to assist the AIDF-Caesars Report Generation system by building a production-ready pipeline using ZenML to forecast several financial indicators for companies. These indicators include:
+     The objective here is to assist the AIDF-Caesars Report Generation system by building a pipeline to forecast several financial indicators for companies. These indicators include:
 
      - SALES_REV_TURN: Sales Revenue or Turnover
      - CF_CASH_FROM_OPER: Cash Flow from Operations
@@ -29,7 +29,7 @@ def main():
      """)
     st.markdown(
     """ 
-    Below is a figure of the whole pipeline.
+    Below is a figure of the MLOps pipeline.
     """
     )
     whole_pipeline_image = Image.open(os.path.join(abs_path, 'mlops-workflow.png'))
@@ -40,10 +40,11 @@ def main():
     y_to_predict = st.text_input("Y to Predict")
 
     bbunique2u3 = pd.read_csv(os.path.join(abs_path, 'bbunique2u3.csv'))
-    company_name = bbunique2u3[bbunique2u3.ID_BB_UNIQUE == company_id]['Company_name'].iloc[0]
-    print(company_name)
     if st.button("Predict"):
         if year_to_predict == 2026:
+            company_name = bbunique2u3[bbunique2u3.ID_BB_UNIQUE == company_id]['Company_name'].iloc[0]
+            print(company_name)
+
             prediction = prediction_service("LGBRegression", company_id, y_to_predict, year_to_predict)
             # run_id = run_metadata.id
             # client = Client()
